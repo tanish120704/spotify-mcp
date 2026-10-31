@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+PROJECT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+if command -v node >/dev/null 2>&1; then
+  NODE_BIN=$(command -v node)
+else
+  NODE_BIN="$HOME/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node"
+fi
+if [ ! -x "$NODE_BIN" ]; then
+  echo 'Node.js 22 or newer is required. Install Node and retry.' >&2
+  exit 1
+fi
+if [ ! -f "$PROJECT_DIR/dist/index.js" ]; then
+  echo 'Build the project first: pnpm install && pnpm build (see README.md).' >&2
+  exit 1
+fi
+exec "$NODE_BIN" "$PROJECT_DIR/dist/index.js" "$@"
